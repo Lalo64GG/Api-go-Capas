@@ -43,3 +43,73 @@ func (s *UserService) CreateUser(user models.User) error {
 	log.Println("Usuario creado correctamente")
 	return nil
 }
+
+//? GetAllUsers es un método del servicio de usuarios que se encarga de obtener todos los usuarios
+func (s *ProductService) GetAllUser() ([]models.User, error) {
+    //* Corregimos la consulta SQL, ahora seleccionando los campos correctamente.
+    query := "SELECT id, name, password FROM users"
+
+    //* Ejecutamos la consulta
+    rows, err := s.DB.Query(query)
+    if err != nil {
+        log.Printf("Error al traer los usuarios: %v", err)
+        return nil, err
+    }
+    defer rows.Close() //* Cerramos las filas cuando ya no se necesiten.
+
+    //* Creamos un slice para almacenar los usuarios
+    var users []models.User
+
+    //* Recorremos las filas obtenidas
+    for rows.Next() {
+        var user models.User
+        //? Escaneamos cada fila en un objeto user
+		//* La función rows.Next() recorre fila por fila los resultados obtenidos de la consulta SQL.
+		//* En cada iteración, necesitamos extraer los datos de la fila actual y almacenarlos
+		//* en una estructura adecuada para poder utilizarlos en nuestra aplicación.
+		//* La función rows.Scan() nos permite asignar los valores de las columnas de la fila actual
+		//* a las propiedades correspondientes de un objeto (en este caso, de tipo models.User).
+		//* Específicamente, estamos mapeando las columnas "id", "name" y "password" a los campos
+		//* user.ID, user.Name, y user.Password, respectivamente.
+		//* Si el mapeo falla, se registra el error y se retorna para evitar procesar datos incompletos o incorrectos.
+        if err := rows.Scan(&user.ID, &user.Name, &user.Password); err != nil {
+            log.Printf("Error al escanear los usuarios: %v", err)
+            return nil, err
+        }
+        users = append(users, user) //* Añadimos el usuario al slice
+    }
+
+    //* Verificamos si hubo errores en el recorrido de las filas
+    if err := rows.Err(); err != nil {
+        log.Printf("Error durante la iteración de filas: %v", err)
+        return nil, err
+    }
+
+    log.Print("Se han obtenido los usuarios de manera exitosa")
+    return users, nil //* Retornamos el slice de usuarios
+}
+
+
+//? GetUserByID es un método del servicio de usuarios que se encarga de obtener un usuario por su ID
+func (s *UserService) GetUserByID(id int) (models.User, error) {
+    //* Consulta SQL para obtener un usuario específico por su ID.
+    query := "SELECT id, name, email, password FROM users WHERE id = ?"
+
+    //* Ejecutamos la consulta para obtener una sola fila usando QueryRow(), ya que solo esperamos un resultado.
+    row := s.DB.QueryRow(query, id)
+
+    //* Creamos una variable para almacenar los datos del usuario.
+    var user models.User
+
+    //* Escaneamos la fila directamente en la estructura user.
+    //* QueryRow().Scan() es suficiente para manejar una única fila.
+    if err := row.Scan(&user.ID, &user.Name, &user.Email, &user.Password); err != nil {
+        //* Si no se encuentra el usuario o ocurre algún error durante el escaneo, lo registramos y retornamos el error.
+        log.Printf("Error al escanear el usuario: %v", err)
+        return models.User{}, err
+    }
+
+    //* Retornamos el usuario encontrado con sus datos.
+    return user, nil
+}
+
