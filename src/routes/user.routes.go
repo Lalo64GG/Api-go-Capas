@@ -17,4 +17,7 @@ func UserRoutes(router *gin.RouterGroup, userService *services.UserService) {
 	//* Define la ruta POST para crear un usuario
 	//* Cuando se haga una solicitud POST a esta ruta, se llamará al método CreateUser del controlador
 	router.POST("/", userController.CreateUser)
+	router.GET("/", userController.GetAllUsers)
+	router.GET("/:id", userController.GetUserByID)
+
 }

@@ -45,7 +45,7 @@ func (s *UserService) CreateUser(user models.User) error {
 }
 
 //? GetAllUsers es un método del servicio de usuarios que se encarga de obtener todos los usuarios
-func (s *ProductService) GetAllUser() ([]models.User, error) {
+func (s *UserService) GetUsersAll() ([]models.User, error) {
     //* Corregimos la consulta SQL, ahora seleccionando los campos correctamente.
     query := "SELECT id, name, password FROM users"
 
