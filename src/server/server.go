@@ -29,13 +29,10 @@ func NewServer(host, port string) Server {
 		httpAddr: host + ":" + port, //* httpAddr es una concatenación del host y puerto para formar la dirección completa
     }
 
-	db := config.InitDB() //* Inicializamos la conexión a la base de datos
+	db, _ := config.InitDB() //* Inicializamos la conexión a la base de datos
 
 	//* Aquí es donde se pueden declarar las rutas o middlewares que se usarán en la aplicación.
 	//* Ejemplo de cómo podría declararse una ruta: s.engine.GET("/ruta", handlerFunc)
-	srv.engine.GET("/ping", func(ctx *gin.Context){
-		ctx.JSON(200, gin.H{"message": "Pong!"})
-	})
 
 	//* Ejemplo de cómo podría declararse un middleware: s.engine.Use(middleware.Logger())
 	srv.engine.Use(middlewares.ConfigurationCors())

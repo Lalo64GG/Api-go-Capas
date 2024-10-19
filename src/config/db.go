@@ -11,7 +11,7 @@ import (
 var DB *sql.DB
 
 //? InitDB inicializa la conexión a la base de datos y la almacena en una variable global DB
-func InitDB() *sql.DB {
+func InitDB() (*sql.DB, error) {
 	//* Configuración de la conexión a la base de datos (modifica los parámetros según sea necesario)
 	dsn := "root:Lolasso1012@tcp(127.0.0.1:3306)/api_taller"
 
@@ -30,6 +30,6 @@ func InitDB() *sql.DB {
 	}
 
 	DB = db
-	return db
+	return db, nil
 }
 
